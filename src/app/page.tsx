@@ -10,19 +10,15 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
 
-  // Ekran boyutunu kontrol eden effect
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768); // 768px mobil breakpoint olarak belirlendi
+      setIsMobile(window.innerWidth <= 768);
     };
 
-    // İlk yüklemede kontrol et
     checkMobile();
 
-    // Pencere boyutu değiştiğinde kontrol et
     window.addEventListener('resize', checkMobile);
 
-    // Cleanup
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -44,8 +40,7 @@ export default function Home() {
 
       const data = await res.json();
       if (data.success && data.score && data.score > 0.5) {
-        // Ekran boyutuna göre yönlendirme
-        const redirectUrl = isMobile ? 'https://t.ly/mobil1' : 't.ly/itopyabet';
+        const redirectUrl = isMobile ? 'https://t.ly/mobil1' : 'https://t.ly/itopyabet';
         window.location.href = redirectUrl;
       } else {
         alert('Bot davranışı tespit edildi veya düşük skor. Tekrar deneyin.');
