@@ -40,7 +40,7 @@ export default function Home() {
 
       const data = await res.json();
       if (data.success && data.score && data.score > 0.5) {
-        const redirectUrl = isMobile ? 'https://t.ly/mobil1' : 'https://t.ly/itopyabet';
+        const redirectUrl = isMobile ? 'https://t.ly/itopyaataozel' : 'https://t.ly/itopyaataozel';
         window.location.href = redirectUrl;
       } else {
         alert('Bot davranışı tespit edildi veya düşük skor. Tekrar deneyin.');
