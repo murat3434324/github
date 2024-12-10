@@ -1,13 +1,30 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  // Ekran boyutunu kontrol eden effect
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768); // 768px mobil breakpoint olarak belirlendi
+    };
+
+    // İlk yüklemede kontrol et
+    checkMobile();
+
+    // Pencere boyutu değiştiğinde kontrol et
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleButtonClick = async () => {
     if (!executeRecaptcha) {
@@ -16,7 +33,7 @@ export default function Home() {
     }
 
     setLoading(true);
-    const token = await executeRecaptcha('submit'); // 'submit' action isimli bir işlem
+    const token = await executeRecaptcha('submit');
 
     try {
       const res = await fetch('/api/verify-recaptcha', {
@@ -25,10 +42,11 @@ export default function Home() {
         body: JSON.stringify({ token }),
       });
 
-      const data: { success?: boolean; score?: number; error?: string } = await res.json();
+      const data = await res.json();
       if (data.success && data.score && data.score > 0.5) {
-        // Skoru 0.5 üzeri ise gerçek kullanıcı olma olasılığı yüksek
-        window.location.href = 'https://t.ly/mobil1';
+        // Ekran boyutuna göre yönlendirme
+        const redirectUrl = isMobile ? 'https://t.ly/mobil1' : 't.ly/itopyabet';
+        window.location.href = redirectUrl;
       } else {
         alert('Bot davranışı tespit edildi veya düşük skor. Tekrar deneyin.');
       }
